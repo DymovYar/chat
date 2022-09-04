@@ -1,11 +1,17 @@
 import express from 'express';
+import mongoose from 'mongoose';
+import config from './config';
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.end('Hi from new server!');
-});
+if (config) {
+    mongoose.connect(config.MONGO_URI);
 
-app.listen(3001, () => {
-    console.log(`Listening on port 3001`);
-});
+    mongoose.connection.on('connected', () => {
+        console.log(`DB connection established`);
+
+        app.listen(config?.PORT, () => {
+            console.log(`Server is listening`);
+        });
+    });
+}
